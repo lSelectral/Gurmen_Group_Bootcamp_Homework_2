@@ -28,7 +28,7 @@ namespace Aspect_Oriented_Programming_API.Controllers
         }
 
         [HttpPost]
-        public void AddCustomer(Customer customer)
+        public void AddCustomer(CustomerInsertCommandModel customer)
         {
             _customerService.AddCustomer(customer);
         }

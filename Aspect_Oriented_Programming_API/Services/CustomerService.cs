@@ -31,9 +31,9 @@ namespace Aspect_Oriented_Programming_API.Services
             return _customerList.Where(x => x.Id == id).SingleOrDefault();
         }
 
-        public void AddCustomer(Customer customer)
+        public void AddCustomer(CustomerInsertCommandModel customer)
         {
-            _customerList.Add(customer);
+            _customerList.Add(new Customer() { Name = customer.Name, Age = customer.Age, Email = customer.Email});
         }
 
         public void UpdateCustomer(Customer customer)
