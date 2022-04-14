@@ -31,19 +31,22 @@ namespace Restaurant_Web_API.Repositories.FoodRepository
             var mappingQuery = "select * from food_ingredients";
             var ingredientsQuery = "select * from ingredients";
 
-            var foods = (await _dbConnection.QueryAsync<Food>(foodQuery)).ToList();
-            var mapping = (await _dbConnection.QueryAsync<FoodWithIngredients>(mappingQuery));
-            var ingredients = (await _dbConnection.QueryAsync<Ingredient>(ingredientsQuery));
+            using (var multi = await _dbConnection.QueryMultipleAsync($"{foodQuery}; {mappingQuery}; {ingredientsQuery}"))
+            {
+                var foods = (await multi.ReadAsync<Food>()).ToList();
+                var mapping = await multi.ReadAsync<FoodWithIngredients>();
+                var ingredients = await multi.ReadAsync<Ingredient>();
 
-            foods.ForEach(f =>
-                f.Ingredients = ingredients
-                .Where(i => mapping
-                .Where(m => m.Food_Id == f.Id)
-                .Select(x => x.Ingredient_Id)
-                .Contains(i.Id))
-                .ToList()
-            );
-            return foods;
+                foods.ForEach(f =>
+                    f.Ingredients = ingredients
+                    .Where(i => mapping
+                    .Where(m => m.Food_Id == f.Id)
+                    .Select(x => x.Ingredient_Id)
+                    .Contains(i.Id))
+                    .ToList()
+                );
+                return foods;
+            }
         }
 
         public async Task<int> SaveFood(FoodInsertCommand command)
@@ -120,28 +123,6 @@ namespace Restaurant_Web_API.Repositories.FoodRepository
             return (await _dbConnection.QueryAsync<FoodIngredientTable>(queryString, 
                 new {id = ingredientId})).ToList();
         }
-        #endregion
-
-        #region Store Procedures
-
-        public async Task<bool> SaveIngredientAndFoodSimultaneously(Food food, Ingredient ingredient)
-        {
-            var commandString = "call sp_ingredient_and_food_insert(@i_name,@i_desc,@i_unit,@i_price,@f_name,@f_desc,@f_type,@f_price)";
-            return await _dbConnection.ExecuteAsync(commandString, 
-                new 
-                {  
-                    i_name = ingredient.Name,
-                    i_desc = ingredient.Description,
-                    i_unit = ingredient.Unit,
-                    i_price = ingredient.Price,
-                    f_name = food.Name,
-                    f_desc = food.Description,
-                    f_type = food.FoodType,
-                    f_price = food.Price
-                }) 
-                > 0;
-        }
-
         #endregion
     }
 }
