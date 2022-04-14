@@ -9,11 +9,11 @@ namespace Observer_Design_Pattern_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IEventPublisher _eventPublisher;
 
-        public ProductController(IEventPublisher eventPublisher)
+        public ProductsController(IEventPublisher eventPublisher)
         {
             _eventPublisher = eventPublisher;
         }
