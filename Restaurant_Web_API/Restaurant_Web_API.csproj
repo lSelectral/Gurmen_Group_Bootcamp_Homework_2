@@ -19,7 +19,6 @@
     <Folder Include="Commands\Ingredient\" />
     <Folder Include="Queries\Ingredient\" />
     <Folder Include="Repositories\IngredientRepository\" />
-    <Folder Include="Validators\" />
   </ItemGroup>
 
 </Project>

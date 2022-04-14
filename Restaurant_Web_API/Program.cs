@@ -6,6 +6,7 @@ using Restaurant_Web_API.Filters;
 using FluentValidation.AspNetCore;
 using Restaurant_Web_API.Middlewares;
 using Restaurant_Web_API.Repositories.FoodRepository;
+using Restaurant_Web_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,8 @@ builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddFluentValidationServices();
 
 var app = builder.Build();
 
